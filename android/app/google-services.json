@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "91693767586",
+    "project_id": "prayertimes-cff2d",
+    "storage_bucket": "prayertimes-cff2d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91693767586:android:5aab5d682800a7163e30fb",
+        "android_client_info": {
+          "package_name": "com.example.prayer_times"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlLFimynY34BC5VXCqI3NIFPtRkJD0c0E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
