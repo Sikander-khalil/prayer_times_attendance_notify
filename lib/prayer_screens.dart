@@ -228,12 +228,20 @@ class _PrayerScreenState extends State<PrayerScreen>
     parsedFormattedDateTime = DateTime.parse(formattedDateTime);
     // Ensure the app is paused or inactive and that prayer times are not null
     if ((state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.detached) &&
-        parsedFormattedDateTime != null && fajarTime != null && duhrTime != null && asrTime != null) {
+        parsedFormattedDateTime != null && fajarTime != null && duhrTime != null && asrTime != null && magribTime != null && ishaTime != null) {
 
       // Calculate the time differences
       Duration fajarDiff = parsedFormattedDateTime!.difference(fajarTime!);
+      print("This is duration FajarDiff: ${fajarDiff}");
       Duration duhrDiff = parsedFormattedDateTime!.difference(duhrTime!);
+      print("This is duration duhrDiff: ${duhrDiff}");
       Duration asrDiff = parsedFormattedDateTime!.difference(asrTime!);
+      print("This is duration asrDiff: ${asrDiff}");
+      Duration magribDiff = parsedFormattedDateTime!.difference(magribTime!);
+      print("This is duration magribDiff: ${magribDiff}");
+
+      Duration ishaDiff = parsedFormattedDateTime!.difference(ishaTime!);
+      print("This is duration ishaDiff: ${ishaDiff}");
 
       // Convert differences to absolute values
       fajarDiff = fajarDiff.abs();
@@ -242,19 +250,45 @@ class _PrayerScreenState extends State<PrayerScreen>
       print("THis is Duhr Diff: ${duhrDiff}");
       asrDiff = asrDiff.abs();
       print("THis is Asr Diff: ${asrDiff}");
+      magribDiff = magribDiff.abs();
+      print("THis is magrib Diff: ${magribDiff}");
+      ishaDiff = ishaDiff.abs();
+      print("THis is isha Diff: ${ishaDiff}");
+
       // Determine the closest prayer time
-      if (fajarDiff <= duhrDiff && fajarDiff <= asrDiff) {
+      if (fajarDiff <= duhrDiff) {
+        print("If Condition FajarDiff: ${fajarDiff}");
+        print("If Condition DuhrDiff: ${duhrDiff}");
         // Fajr time is closest
         NotificationService().scheduleNotification(
             scheduledNotificationDateTime: fajarTime!
         );
         print("Notification Scheduled: Fajr Time - ${fajarTime}");
       } else if (duhrDiff <= asrDiff) {
+        print("If Condition DuhrDiff: ${duhrDiff}");
+        print("If Condition asrDiff: ${asrDiff}");
+
         // Duhr time is closest
         NotificationService().scheduleNotification(
             scheduledNotificationDateTime: duhrTime!
         );
         print("Notification Scheduled: Duhr Time - ${duhrTime}");
+      } else if (asrDiff <= magribDiff) {
+        print("If Condition asrDiff: ${asrDiff}");
+        print("If Condition magribDiff: ${magribDiff}");
+        // Duhr time is closest
+        NotificationService().scheduleNotification(
+            scheduledNotificationDateTime: asrTime!
+        );
+        print("Notification Scheduled: Asr Time - ${asrTime}");
+      }else if (magribDiff <= ishaDiff) {
+        print("If Condition magribDiff: ${magribDiff}");
+        print("If Condition ishaDiff: ${ishaDiff}");
+        // Duhr time is closest
+        NotificationService().scheduleNotification(
+            scheduledNotificationDateTime: magribTime!
+        );
+        print("Notification Scheduled: Magrib Time - ${magribTime}");
       }
       setState(() {
 
@@ -493,11 +527,6 @@ class _PrayerScreenState extends State<PrayerScreen>
                         : Icons.check_box_outline_blank,
                     color: Colors.white,
                   ),
-                )
-              ] else ...[
-                Icon(
-                  Icons.check_box_outline_blank,
-                  color: Colors.white,
                 )
               ]
             ],

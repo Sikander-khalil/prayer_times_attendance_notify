@@ -106,24 +106,24 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: StreamBuilder<User?>(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       // Waiting for Firebase Authentication to initialize
-      //       return CircularProgressIndicator();
-      //     } else {
-      //       if (snapshot.hasData) {
-      //         // User is logged in, show PrayerScreen
-      //         return PrayerScreen();
-      //       } else {
-      //         // User is not logged in, show LoginScreen
-      //         return LoginScreen();
-      //       }
-      //     }
-      //   },
-      // ),
-      home: PrayerScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Waiting for Firebase Authentication to initialize
+            return CircularProgressIndicator();
+          } else {
+            if (snapshot.hasData) {
+              // User is logged in, show PrayerScreen
+              return PrayerScreen();
+            } else {
+              // User is not logged in, show LoginScreen
+              return LoginScreen();
+            }
+          }
+        },
+      ),
+     // home: PrayerScreen(),
 
     );
   }
@@ -165,4 +165,6 @@ class _MyAppState extends State<MyApp> {
 //     );
 //   }
 // }
+
+
 
