@@ -52,6 +52,7 @@ dependencies:
   cloud_firestore: ^4.15.8
   firebase_database:
   uuid:
+  firebase_messaging: ^14.7.19
   workmanager: ^0.5.2
   flutter_background_service: ^2.4.6
 dev_dependencies:
