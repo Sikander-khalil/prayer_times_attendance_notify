@@ -9,7 +9,7 @@ import 'package:prayer_times/prayer_screens.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 import 'login_screen.dart';
-import 'notify.dart';
+
 
 
 
@@ -32,7 +32,7 @@ void main() async {
   await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   //HttpOverrides.global = new PostHttpOverrides();
-  NotificationService().initNotification();
+
   runApp(MyApp());
 }
 

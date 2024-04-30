@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,8 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'attendance_list_screen.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-
-
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -29,23 +27,23 @@ class PrayerScreen extends StatefulWidget {
   @override
   State<PrayerScreen> createState() => _PrayerScreenState();
 
-  // Future<void> initNotification() async {
-  //   AndroidInitializationSettings initializationSettingsAndroid =
-  //       const AndroidInitializationSettings('@mipmap/ic_launcher');
-  //
-  //   var initializationSettingsIOS = DarwinInitializationSettings(
-  //       requestAlertPermission: true,
-  //       requestBadgePermission: true,
-  //       requestSoundPermission: true,
-  //       onDidReceiveLocalNotification:
-  //           (int id, String? title, String? body, String? payload) async {});
-  //
-  //   var initializationSettings = InitializationSettings(
-  //       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  //   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-  //       onDidReceiveNotificationResponse:
-  //           (NotificationResponse notificationResponse) async {});
-  // }
+// Future<void> initNotification() async {
+//   AndroidInitializationSettings initializationSettingsAndroid =
+//       const AndroidInitializationSettings('@mipmap/ic_launcher');
+//
+//   var initializationSettingsIOS = DarwinInitializationSettings(
+//       requestAlertPermission: true,
+//       requestBadgePermission: true,
+//       requestSoundPermission: true,
+//       onDidReceiveLocalNotification:
+//           (int id, String? title, String? body, String? payload) async {});
+//
+//   var initializationSettings = InitializationSettings(
+//       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+//   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+//       onDidReceiveNotificationResponse:
+//           (NotificationResponse notificationResponse) async {});
+// }
 }
 
 class _PrayerScreenState extends State<PrayerScreen>
@@ -54,9 +52,9 @@ class _PrayerScreenState extends State<PrayerScreen>
   String? currentCity;
   String? mToken;
   String? currentCountry;
-  static DateTime currentDateTime = DateTime.now();
-  final formattedDateTime =
-      DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(currentDateTime);
+    static DateTime currentDateTime = DateTime.now();
+    final formattedDateTime =
+        DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(currentDateTime);
   late Timer _timer;
   DateTime? parsedFormattedDateTime;
   String _currentTime = '';
@@ -71,21 +69,17 @@ class _PrayerScreenState extends State<PrayerScreen>
 
   // Desired time (04:05:00.000)
   static int desiredHour = 4;
- static int desiredMinute = 5;
- static int desiredSecond = 0;
- static int desiredMillisecond = 0;
+  static int desiredMinute = 5;
+  static int desiredSecond = 0;
+  static int desiredMillisecond = 0;
 
-  DateTime? fajarTime;
+  static DateTime now = DateTime.now();
 
-static  DateTime now = DateTime.now();
   // Create a new DateTime object with current date and desired time
-  DateTime fajarScheduledTime = DateTime(now.year, now.month, now.day, desiredHour, desiredMinute, desiredSecond, desiredMillisecond);
-
-
+  DateTime fajarScheduledTime = DateTime(now.year, now.month, now.day,
+      desiredHour, desiredMinute, desiredSecond, desiredMillisecond);
 
   //   AppLifecycleState? appLifecycleState;
-
-
 
   @override
   void initState() {
@@ -106,8 +100,12 @@ static  DateTime now = DateTime.now();
     getCurrentToken();
     _scheduleNotifications();
     _scheduleNotifications2();
+
     sendPushMessage();
     sendPushMessage2();
+    sendScheduledNotification();
+
+
   }
 
   Future<void> getCurrentToken() async {
@@ -119,8 +117,8 @@ static  DateTime now = DateTime.now();
   }
 
   void requestPermission() async {
-    NotificationSettings notificationSettings =
-    await FirebaseMessaging.instance.requestPermission(
+    final notificationSettings =
+        await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -141,9 +139,6 @@ static  DateTime now = DateTime.now();
     }
   }
 
-
-
-
   Future<void> _loadPrayerAttendance() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? prayerAttendanceJson = prefs.getString('prayerAttendance');
@@ -157,9 +152,6 @@ static  DateTime now = DateTime.now();
       });
     }
   }
-
-
-
 
   String _getCurrentTime() {
     var now = DateTime.now();
@@ -232,36 +224,30 @@ static  DateTime now = DateTime.now();
               return {prayerTime!: false};
             });
           }
-
         });
-
     }
   }
 
   void _initializeNotifications() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     final InitializationSettings initializationSettings =
-    InitializationSettings(android: initializationSettingsAndroid);
+        InitializationSettings(android: initializationSettingsAndroid);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   Future<void> _scheduleNotifications() async {
-
-
     await _localScheduleNotification(time);
   }
 
   Future<void> _scheduleNotifications2() async {
-
-
     await _localScheduleNotification2(time2);
   }
 
+
+
   Future<void> _localScheduleNotification(DateTime scheduledTime) async {
-
-
     var scheduledTZTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
     print("This is ScheduledTime: ${scheduledTime}");
@@ -286,14 +272,12 @@ static  DateTime now = DateTime.now();
       notificationDetails,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 
   Future<void> _localScheduleNotification2(DateTime scheduledTime) async {
-
-
     var scheduledTZTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
     print("This is ScheduledTime: ${scheduledTime}");
@@ -318,10 +302,13 @@ static  DateTime now = DateTime.now();
       notificationDetails,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
+
+
+
 
   String _calculateRemainingTime() {
     if (prayerTimings == null) return '';
@@ -371,25 +358,32 @@ static  DateTime now = DateTime.now();
     super.dispose();
   }
 
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    parsedFormattedDateTime = DateTime.parse(formattedDateTime);
-
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.detached &&
-        parsedFormattedDateTime != null &&
-        fajarTime != null && parsedFormattedDateTime == fajarTime) {
-      print("This is Fajar Notfication Schedular: ${fajarTime}");
-
-      NotificationService().scheduleNotification(scheduledNotificationDateTime: fajarTime!);
-
-
-
-
-    }
-  }
-
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   parsedFormattedDateTime = DateTime.parse(formattedDateTime);
+  //
+  //   if (  state == AppLifecycleState.paused ||
+  //           state == AppLifecycleState.inactive ||
+  //           state == AppLifecycleState.detached && parsedFormattedDateTime != null &&
+  //               parsedFormattedDateTime == fajarScheduledTime
+  //       ) {
+  //     // // Calculate the time differences for all prayer times
+  //     // Duration fajarDiff = parsedFormattedDateTime!.difference(fajarTime!);
+  //     // Duration duhrDiff = parsedFormattedDateTime!.difference(duhrTime!);
+  //     //
+  //     // // Convert differences to absolute values
+  //     // fajarDiff = fajarDiff.abs();
+  //     // duhrDiff = duhrDiff.abs();
+  //
+  //     // Determine the closest prayer time and schedule notification
+  //
+  //       NotificationService()
+  //           .scheduleNotification(scheduledNotificationDateTime: fajarScheduledTime);
+  //
+  //
+  //   }
+  // }
 
   void sendPushMessage() async {
-
     try {
       print("This is Mtoken: ${mToken}");
       String formattedTime = time.toIso8601String();
@@ -398,7 +392,7 @@ static  DateTime now = DateTime.now();
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization':
-          'key=AAAAFVlf26I:APA91bF5-w25XKijPFYgfapcGT8vyral7rvBez5eeeVRp6JetRjjjS-GCVKa9Xuag5oK7eNHaxLGdRm1tcpcJ-rUP77z3nQgfzynXQQqFin4YBKhgYz_pSKhjdtmr3owmx37gmnzEhcq',
+              'key=AAAAFVlf26I:APA91bF5-w25XKijPFYgfapcGT8vyral7rvBez5eeeVRp6JetRjjjS-GCVKa9Xuag5oK7eNHaxLGdRm1tcpcJ-rUP77z3nQgfzynXQQqFin4YBKhgYz_pSKhjdtmr3owmx37gmnzEhcq',
         },
         body: jsonEncode(<String, dynamic>{
           'priority': 'high',
@@ -411,8 +405,8 @@ static  DateTime now = DateTime.now();
           "notification": <String, dynamic>{
             "title": 'title',
             "body": 'body',
-            "isScheduled" : true,
-            "scheduledTime" : formattedTime,
+            "isScheduled": true,
+            "scheduledTime": formattedTime,
             "android_channel_id": "dbNotifyMessage"
             //"scheduledTime" : "2024-04-27 10:27:00",
           },
@@ -421,7 +415,7 @@ static  DateTime now = DateTime.now();
       );
       print("This is TOken: ${mToken}");
     } catch (e) {
-      throw e.toString();
+      print(e.toString());
     }
   }
 
@@ -434,7 +428,7 @@ static  DateTime now = DateTime.now();
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization':
-          'key=AAAAFVlf26I:APA91bF5-w25XKijPFYgfapcGT8vyral7rvBez5eeeVRp6JetRjjjS-GCVKa9Xuag5oK7eNHaxLGdRm1tcpcJ-rUP77z3nQgfzynXQQqFin4YBKhgYz_pSKhjdtmr3owmx37gmnzEhcq',
+              'key=AAAAFVlf26I:APA91bF5-w25XKijPFYgfapcGT8vyral7rvBez5eeeVRp6JetRjjjS-GCVKa9Xuag5oK7eNHaxLGdRm1tcpcJ-rUP77z3nQgfzynXQQqFin4YBKhgYz_pSKhjdtmr3owmx37gmnzEhcq',
         },
         body: jsonEncode(<String, dynamic>{
           'priority': 'high',
@@ -447,8 +441,8 @@ static  DateTime now = DateTime.now();
           "notification": <String, dynamic>{
             "title": 'title',
             "body": 'body',
-            "isScheduled" : true,
-            "scheduledTime" : formattedTime2,
+            "isScheduled": true,
+            "scheduledTime": formattedTime2,
             "android_channel_id": "dbNotifyMessage2"
             //"scheduledTime" : "2024-04-27 11:27:00",
           },
@@ -457,16 +451,96 @@ static  DateTime now = DateTime.now();
       );
       print("This is TOken: ${mToken}");
     } catch (e) {
-      throw e.toString();
+      print(e.toString());
     }
+  }
+
+
+
+  Future<void> sendScheduledNotification() async {
+    // Replace with your FCM server key
+    String serverKey = 'AAAAFVlf26I:APA91bF5-w25XKijPFYgfapcGT8vyral7rvBez5eeeVRp6JetRjjjS-GCVKa9Xuag5oK7eNHaxLGdRm1tcpcJ-rUP77z3nQgfzynXQQqFin4YBKhgYz_pSKhjdtmr3owmx37gmnzEhcq';
+    // Replace with the topic or device token you want to send the notification to
+    String? to = mToken;
+    // Firebase Cloud Messaging endpoint
+    String url = 'https://fcm.googleapis.com/fcm/send';
+
+    // Get current time
+    DateTime now = DateTime.now();
+
+    // Convert scheduled time to Unix epoch format
+    DateTime scheduledDateTime = DateTime(now.year, now.month, now.day, 4, 30, 0);
+
+    await scheduleLocalNotification(scheduledDateTime);
+
+    // Notification payload
+    Map<String, dynamic> notification = {
+      'title': 'Notification Title',
+      'body': 'Notification Body',
+      'isScheduled': true,
+      "scheduledTime": scheduledDateTime.toIso8601String(), // Convert DateTime to ISO 8601 string
+      "android_channel_id": "notifyMessage",
+      'android': {
+        'priority': 'high', // Required for scheduled notifications on Android
+      },
+    };
+
+    // Full payload to send
+    Map<String, dynamic> data = {
+      'to': to,
+      'notification': notification,
+    };
+
+    // Encode the payload to JSON
+    String jsonData = jsonEncode(data);
+
+    // Send HTTP POST request
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$serverKey',
+        },
+        body: jsonData,
+      );
+
+      if (response.statusCode == 200) {
+        print('Notification scheduled successfully');
+      } else {
+        print('Failed to schedule notification: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error scheduling notification: $e');
+    }
+  }
+
+
+
+  Future<void> scheduleLocalNotification(DateTime scheduledTime) async {
+    // Schedule a local notification
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0, // Notification id
+      'Scheduled Notification', // Notification title
+      'This is a scheduled notification.', // Notification body
+      tz.TZDateTime.from(
+        scheduledTime,
+        tz.local,
+      ),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'notifyMessage', 'notifyMessage',
+        ),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+      UILocalNotificationDateInterpretation.absoluteTime,
+    );
   }
 
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -596,16 +670,16 @@ static  DateTime now = DateTime.now();
     bool showIcons = false;
     final now = DateTime.now();
     if (prayerTimings != null) {
-       fajarTime = DateFormat('yyyy-MM-dd HH:mm').parse(
+      DateTime   fajarTime = DateFormat('yyyy-MM-dd HH:mm').parse(
           '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ${prayerTimings!['Fajr']}');
 
-      DateTime duhrTime = DateFormat('yyyy-MM-dd HH:mm').parse(
+      DateTime  duhrTime = DateFormat('yyyy-MM-dd HH:mm').parse(
           '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ${prayerTimings!['Dhuhr']}');
-    DateTime asrTime = DateFormat('yyyy-MM-dd HH:mm').parse(
+      DateTime asrTime = DateFormat('yyyy-MM-dd HH:mm').parse(
           '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ${prayerTimings!['Asr']}');
-    DateTime  magribTime = DateFormat('yyyy-MM-dd HH:mm').parse(
+      DateTime magribTime = DateFormat('yyyy-MM-dd HH:mm').parse(
           '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ${prayerTimings!['Maghrib']}');
-    DateTime  ishaTime = DateFormat('yyyy-MM-dd HH:mm').parse(
+      DateTime ishaTime = DateFormat('yyyy-MM-dd HH:mm').parse(
           '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ${prayerTimings!['Isha']}');
 
       final timeThreshold = Duration(seconds: 1);
@@ -638,7 +712,7 @@ static  DateTime now = DateTime.now();
       //       .scheduleNotification(scheduledNotificationDateTime: ishaTime!);
       // }
 
-      if (now.isAfter(fajarTime!) && now.isBefore(duhrTime) && index == 0) {
+      if (now.isAfter(fajarTime) && now.isBefore(duhrTime) && index == 0) {
         showIcons = true;
 
         _savePrayerAttendance(); // Save the updated prayer attendance
