@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:marquee/marquee.dart';
-import 'package:prayer_times/notify.dart';
+
 import 'package:prayer_times/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,23 +27,7 @@ class PrayerScreen extends StatefulWidget {
   @override
   State<PrayerScreen> createState() => _PrayerScreenState();
 
-// Future<void> initNotification() async {
-//   AndroidInitializationSettings initializationSettingsAndroid =
-//       const AndroidInitializationSettings('@mipmap/ic_launcher');
-//
-//   var initializationSettingsIOS = DarwinInitializationSettings(
-//       requestAlertPermission: true,
-//       requestBadgePermission: true,
-//       requestSoundPermission: true,
-//       onDidReceiveLocalNotification:
-//           (int id, String? title, String? body, String? payload) async {});
-//
-//   var initializationSettings = InitializationSettings(
-//       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-//   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-//       onDidReceiveNotificationResponse:
-//           (NotificationResponse notificationResponse) async {});
-// }
+
 }
 
 class _PrayerScreenState extends State<PrayerScreen>
@@ -63,7 +47,8 @@ class _PrayerScreenState extends State<PrayerScreen>
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   List<Map<String, bool>> prayerAttendance = [];
   bool isNotificationShown = false;
-  DateTime time = DateTime( DateTime.now().year, DateTime.now().month, DateTime.now().day, 4, 30, 0);
+  DateTime time = DateTime(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day, 4, 30, 0);
 
   var time2 = DateTime(
       DateTime.now().year, DateTime.now().month, DateTime.now().day, 13, 05);
@@ -76,17 +61,7 @@ class _PrayerScreenState extends State<PrayerScreen>
   var time5 = DateTime(
       DateTime.now().year, DateTime.now().month, DateTime.now().day, 20, 00);
 
-  // Desired time (04:05:00.000)
-  static int desiredHour = 4;
-  static int desiredMinute = 5;
-  static int desiredSecond = 0;
-  static int desiredMillisecond = 0;
 
-  static DateTime now = DateTime.now();
-
-  // Create a new DateTime object with current date and desired time
-  DateTime fajarScheduledTime = DateTime(now.year, now.month, now.day,
-      desiredHour, desiredMinute, desiredSecond, desiredMillisecond);
 
   //   AppLifecycleState? appLifecycleState;
 
@@ -247,21 +222,32 @@ class _PrayerScreenState extends State<PrayerScreen>
     final InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    _scheduleNotification();
   }
 
   Future<void> _scheduleNotifications() async {
-    // Get the current time
-    DateTime now = DateTime.now();
+    try {
+      // Get the current time
+      DateTime now = DateTime.now();
 
-    // Define the time you want to schedule the notification (4:30 AM)
-    DateTime scheduledTime = DateTime(now.year, now.month, now.day, 4, 30); // Adjust hour and minute as needed
+      // Define the time you want to schedule the notification (4:30 AM)
+      DateTime scheduledTime = DateTime(now.year, now.month, now.day, 4, 30);
 
-    // Convert scheduledTime to the local time zone
-    tz.TZDateTime scheduledTZTime = tz.TZDateTime.from(scheduledTime, tz.local);
+      // If the scheduled time is in the past, schedule it for the next day
+      if (scheduledTime.isBefore(now)) {
+        scheduledTime = scheduledTime.add(Duration(seconds: 1));
+      }
 
-    // Schedule the notification
-    await _localScheduleNotification(scheduledTZTime);
+      // Convert scheduledTime to the local time zone
+      tz.TZDateTime scheduledTZTime = tz.TZDateTime.from(scheduledTime, tz.local);
+
+      // Schedule the notification
+      await _localScheduleNotification(scheduledTZTime);
+    } catch (e, stackTrace) {
+      print('Error scheduling notification: $e\n$stackTrace');
+    }
   }
+
 
   Future<void> _scheduleNotifications2() async {
     await _localScheduleNotification2(time2);
@@ -280,6 +266,49 @@ class _PrayerScreenState extends State<PrayerScreen>
   }
 
 
+  Future<void> _scheduleNotification() async {
+    var scheduledNotificationDateTime =
+    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 16, 30);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+    );
+
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.schedule(
+      0,
+      'Azan Notification',
+      'It\'s Azan time!',
+      scheduledNotificationDateTime,
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+    );
+
+    // Sound play karne ka code yahan add kiya gaya hai
+    var currentTime = DateTime.now();
+    print(currentTime);
+    var azanTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 16, 30);
+    print(azanTime);
+    var timeDifference = azanTime.difference(currentTime).inMilliseconds;
+    print(timeDifference);
+    Timer(Duration(milliseconds: timeDifference), () {
+      print("Hello");
+      _playSound();
+    });
+  }
+
+
+
+  Future<void> _playSound() async {
+    print("Hello");
+    AssetsAudioPlayer.newPlayer().open(
+      Audio("assets/sound/azan3.mp3"),
+      showNotification: true,
+    );
+  }
+
   Future<void> _localScheduleNotification(tz.TZDateTime scheduledTime) async {
     print("Scheduled Time: $scheduledTime");
 
@@ -291,11 +320,13 @@ class _PrayerScreenState extends State<PrayerScreen>
       scheduledTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'dbNotifyMessage', 'dbNotifyMessage',
+          'dbNotifyMessage',
+          'dbNotifyMessage',
         ),
       ),
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
@@ -327,7 +358,6 @@ class _PrayerScreenState extends State<PrayerScreen>
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
-
   }
 
   Future<void> _localScheduleNotification3(DateTime scheduledTime) async {
@@ -358,9 +388,6 @@ class _PrayerScreenState extends State<PrayerScreen>
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
-
-
-
   }
 
   Future<void> _localScheduleNotification4(DateTime scheduledTime) async {
@@ -391,9 +418,6 @@ class _PrayerScreenState extends State<PrayerScreen>
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
-
-
-
   }
 
   Future<void> _localScheduleNotification5(DateTime scheduledTime) async {
@@ -424,12 +448,7 @@ class _PrayerScreenState extends State<PrayerScreen>
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
-
-
   }
-
-
-
 
   String _calculateRemainingTime() {
     if (prayerTimings == null) return '';
@@ -479,30 +498,7 @@ class _PrayerScreenState extends State<PrayerScreen>
     super.dispose();
   }
 
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   parsedFormattedDateTime = DateTime.parse(formattedDateTime);
-  //
-  //   if (  state == AppLifecycleState.paused ||
-  //           state == AppLifecycleState.inactive ||
-  //           state == AppLifecycleState.detached && parsedFormattedDateTime != null &&
-  //               parsedFormattedDateTime == fajarScheduledTime
-  //       ) {
-  //     // // Calculate the time differences for all prayer times
-  //     // Duration fajarDiff = parsedFormattedDateTime!.difference(fajarTime!);
-  //     // Duration duhrDiff = parsedFormattedDateTime!.difference(duhrTime!);
-  //     //
-  //     // // Convert differences to absolute values
-  //     // fajarDiff = fajarDiff.abs();
-  //     // duhrDiff = duhrDiff.abs();
-  //
-  //     // Determine the closest prayer time and schedule notification
-  //
-  //       NotificationService()
-  //           .scheduleNotification(scheduledNotificationDateTime: fajarScheduledTime);
-  //
-  //
-  //   }
-  // }
+
 
   void sendPushMessage() async {
     try {
@@ -645,11 +641,10 @@ class _PrayerScreenState extends State<PrayerScreen>
     }
   }
 
-
   Future<void> sendPushMessage5() async {
-
     // Replace with your FCM server key
-    String serverKey = 'AAAAFVlf26I:APA91bF5-w25XKijPFYgfapcGT8vyral7rvBez5eeeVRp6JetRjjjS-GCVKa9Xuag5oK7eNHaxLGdRm1tcpcJ-rUP77z3nQgfzynXQQqFin4YBKhgYz_pSKhjdtmr3owmx37gmnzEhcq';
+    String serverKey =
+        'AAAAFVlf26I:APA91bF5-w25XKijPFYgfapcGT8vyral7rvBez5eeeVRp6JetRjjjS-GCVKa9Xuag5oK7eNHaxLGdRm1tcpcJ-rUP77z3nQgfzynXQQqFin4YBKhgYz_pSKhjdtmr3owmx37gmnzEhcq';
     // Replace with the topic or device token you want to send the notification to
     String? to = mToken;
     // Firebase Cloud Messaging endpoint
@@ -698,6 +693,9 @@ class _PrayerScreenState extends State<PrayerScreen>
       print('Error scheduling notification: $e');
     }
   }
+
+
+
 
 
 

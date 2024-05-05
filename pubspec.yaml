@@ -55,6 +55,8 @@ dependencies:
   firebase_messaging: ^14.7.19
   workmanager: ^0.5.2
   flutter_background_service: ^2.4.6
+  datetime_setting: ^2.0.2
+  ntp: ^2.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
