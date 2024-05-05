@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (textFieldFocusNode.hasPrimaryFocus)
         return; // If focus is on text field, dont unfocus
       textFieldFocusNode.canRequestFocus =
-      false; // Prevents focus if tap on eye
+          false; // Prevents focus if tap on eye
     });
   }
 
@@ -49,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
   void _validatePassword(String value) {
     if (value.isEmpty) {
       setState(() {
@@ -65,8 +64,8 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
-  bool isEmailValid(String email) {
 
+  bool isEmailValid(String email) {
     return RegExp(r'^[\w-\.]+@[a-zA-Z]+\.[a-zA-Z]{2,}$').hasMatch(email);
   }
 
@@ -79,7 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         // User is logged in successfully, navigate to the next screen
-        Navigator.push(context, MaterialPageRoute(builder: (context) => PrayerScreen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => PrayerScreen()));
       } catch (e) {
         if (e is FirebaseAuthException) {
           String errorMessage;
@@ -107,7 +107,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +142,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: "Enter Your Email",
                     border: OutlineInputBorder(),
                     errorText: _emailErrorText,
-
                   ),
                   onChanged: _validateEmail,
                 ),
@@ -152,7 +150,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(20.0),
                 child: TextFormField(
                   controller: passController,
-                  obscureText: _obscured, // This will hide/show password based on _obscured value
+                  obscureText: _obscured,
+                  // This will hide/show password based on _obscured value
                   decoration: InputDecoration(
                     suffixIcon: Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
@@ -173,7 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: _validatePassword,
                 ),
               ),
-
               SizedBox(
                 height: 10,
               ),

@@ -178,10 +178,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             padding: const EdgeInsets.all(2.0),
             child: Column(
               children: [
-                Image.asset("assets/images/mosque.png", width: 200,),
-
-
-                SizedBox(height: 20,),
+                Image.asset(
+                  "assets/images/mosque.png",
+                  width: 200,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
                   height: 80,
                   child: Padding(
@@ -202,8 +205,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: BoxDecoration(
                         // Use BoxDecoration for border styling
 
-                        border: Border.all(
-                            color: Colors.black), // Set border color
+                        border:
+                            Border.all(color: Colors.black), // Set border color
                       ),
                     ),
                   ),
@@ -231,8 +234,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: BoxDecoration(
                         // Use BoxDecoration for border styling
 
-                        border: Border.all(
-                            color: Colors.black), // Set border color
+                        border:
+                            Border.all(color: Colors.black), // Set border color
                       ),
                     ),
                   ),
@@ -260,8 +263,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: BoxDecoration(
                         // Use BoxDecoration for border styling
 
-                        border: Border.all(
-                            color: Colors.black), // Set border color
+                        border:
+                            Border.all(color: Colors.black), // Set border color
                       ),
                     ),
                   ),
@@ -289,8 +292,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: BoxDecoration(
                         // Use BoxDecoration for border styling
 
-                        border: Border.all(
-                            color: Colors.black), // Set border color
+                        border:
+                            Border.all(color: Colors.black), // Set border color
                       ),
                     ),
                   ),

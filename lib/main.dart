@@ -10,12 +10,7 @@ import 'package:timezone/data/latest.dart' as tz;
 
 import 'login_screen.dart';
 
-
-
-
 PrayerScreen prayerScreen = PrayerScreen();
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,9 +60,6 @@ class _MyAppState extends State<MyApp> {
           }
         },
       ),
-
     );
   }
 }
-
-

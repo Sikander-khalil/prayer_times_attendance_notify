@@ -33,7 +33,7 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
 
         if (snapshot.snapshot.value != null) {
           Map<dynamic, dynamic> values =
-          snapshot.snapshot.value as Map<dynamic, dynamic>;
+              snapshot.snapshot.value as Map<dynamic, dynamic>;
 
           values.forEach((dateKey, prayers) {
             Map<String, dynamic> dateEntry = {
@@ -66,7 +66,6 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +139,6 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                             bool attendance =
                                 prayers[prayerIndex]['attendance'];
 
-
                             return ListTile(
                                 title: Text(
                                   prayerName,
@@ -151,9 +149,9 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 leading: attendance
-                                    ? Icon(Icons.check_circle_outline, color: Colors.white)
-                                    : Icon(Icons.cancel,
-                                        color: Colors.red));
+                                    ? Icon(Icons.check_circle_outline,
+                                        color: Colors.white)
+                                    : Icon(Icons.cancel, color: Colors.red));
                           },
                         ),
                       ],
