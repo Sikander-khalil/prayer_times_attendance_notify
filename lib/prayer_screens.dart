@@ -286,10 +286,10 @@ class _PrayerScreenState extends State<PrayerScreen>
       androidAllowWhileIdle: true,
     );
 
-    // Sound play karne ka code yahan add kiya gaya hai
+
     var currentTime = DateTime.now();
     print(currentTime);
-    var azanTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 16, 30);
+    var azanTime = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 13, 05);
     print(azanTime);
     var timeDifference = azanTime.difference(currentTime).inMilliseconds;
     print(timeDifference);
@@ -302,12 +302,26 @@ class _PrayerScreenState extends State<PrayerScreen>
 
 
   Future<void> _playSound() async {
+    // Create a new instance of AssetsAudioPlayer
+    final assetsAudioPlayer = AssetsAudioPlayer();
+
+    // Check if there's currently audio playing
+    if (assetsAudioPlayer.isPlaying.value) {
+      // Stop the current audio
+      assetsAudioPlayer.stop();
+    }
+
+    // Print a message
     print("Hello");
-    AssetsAudioPlayer.newPlayer().open(
+
+    // Open the new audio player
+    assetsAudioPlayer.open(
       Audio("assets/sound/azan3.mp3"),
       showNotification: true,
     );
   }
+
+
 
   Future<void> _localScheduleNotification(tz.TZDateTime scheduledTime) async {
     print("Scheduled Time: $scheduledTime");
