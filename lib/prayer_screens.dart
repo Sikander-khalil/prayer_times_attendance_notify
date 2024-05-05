@@ -250,7 +250,17 @@ class _PrayerScreenState extends State<PrayerScreen>
   }
 
   Future<void> _scheduleNotifications() async {
-    await _localScheduleNotification(time);
+    // Get the current time
+    DateTime now = DateTime.now();
+
+    // Define the time you want to schedule the notification (4:30 AM)
+    DateTime scheduledTime = DateTime(now.year, now.month, now.day, 4, 30); // Adjust hour and minute as needed
+
+    // Convert scheduledTime to the local time zone
+    tz.TZDateTime scheduledTZTime = tz.TZDateTime.from(scheduledTime, tz.local);
+
+    // Schedule the notification
+    await _localScheduleNotification(scheduledTZTime);
   }
 
   Future<void> _scheduleNotifications2() async {
@@ -270,29 +280,22 @@ class _PrayerScreenState extends State<PrayerScreen>
   }
 
 
-  Future<void> _localScheduleNotification(DateTime scheduledTime) async {
-
-    print("This is ScheduledTime: ${scheduledTime}");
-    final scheduledTZTime =  tz.TZDateTime.from(
-      scheduledTime,
-      tz.local,
-    );
-    print("This is Tz ScheduledTIme: ${scheduledTZTime}");
+  Future<void> _localScheduleNotification(tz.TZDateTime scheduledTime) async {
+    print("Scheduled Time: $scheduledTime");
 
     // Schedule a local notification
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0, // Notification id
       'Scheduled Notification', // Notification title
       'This is a scheduled notification.', // Notification body
-      scheduledTZTime,
+      scheduledTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'dbNotifyMessage', 'dbNotifyMessage',
         ),
       ),
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
